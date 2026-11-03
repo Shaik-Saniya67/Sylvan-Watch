@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html { background: #FBF6EC; color: #33403A; scroll-behavior: smooth; }
+body { font-family: ui-sans-serif, system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+::selection { background: #FBE9A6; }
+
+@layer components {
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-transform duration-150 active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed; }
+  .btn-primary { @apply btn bg-coral text-white shadow-soft hover:brightness-95; }
+  .btn-soft { @apply btn bg-paper border border-line text-ink hover:bg-butter/60; }
+  .card { @apply rounded-3xl border border-line bg-paper p-6 shadow-soft; }
+  .label { @apply mb-1 block text-xs font-medium uppercase tracking-wider text-muted; }
+  .field { @apply w-full rounded-xl border border-line bg-ivory px-3 py-2 text-sm outline-none focus:border-coral; }
+}
+
+.maplibregl-map { font-family: inherit; }
+@media (prefers-reduced-motion: reduce) { * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }

@@ -1,0 +1,10 @@
+{
+  "_comment": "CANDIDATE sites only. Bounding boxes are approximate and unverified: run `python scripts/fetch_chips.py` and read its per-site loss-rate audit, then adjust boxes so every train/val/test site contains meaningful Hansen loss. Whole sites are assigned to one split to prevent spatial leakage. Season months are the cloud-poorest months of each site; keep before/after seasons identical to avoid phenology false positives.",
+  "sites": [
+    {"name": "rondonia_a", "bbox": [-63.60, -9.85, -63.35, -9.60], "split": "train", "season_months": [6, 8], "before_year": 2019, "after_year": 2023, "note": "Amazon deforestation arc, Brazil"},
+    {"name": "riau_sumatra", "bbox": [101.50, 0.45, 101.75, 0.70], "split": "val", "season_months": [1, 12], "before_year": 2019, "after_year": 2023, "note": "Year-round cloud: whole-year median"},
+    {"name": "hasdeo_arand", "bbox": [82.55, 22.30, 82.80, 22.55], "split": "val", "season_months": [1, 4], "before_year": 2019, "after_year": 2023, "note": "Central India mining-forest landscape"},
+    {"name": "rondonia_b", "bbox": [-62.40, -11.20, -62.15, -10.95], "split": "test", "season_months": [6, 8], "before_year": 2019, "after_year": 2023, "note": "Held-out Amazon site, >100 km from rondonia_a"},
+    {"name": "seshachalam_ap", "bbox": [79.20, 13.55, 79.45, 13.80], "split": "test", "season_months": [1, 4], "before_year": 2019, "after_year": 2023, "note": "Local Andhra Pradesh hills; expect little mapped loss, report separately"}
+  ]
+}

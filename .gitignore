@@ -1,3 +1,14 @@
+node_modules/
+.next/
+.env
+.env.local
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+backend/storage/
+*.pt
+*.joblib
+*.tif
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -179,3 +190,15 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+# Secrets and local environments
+**/.env
+**/.env.*
+!**/.env.example
+**/.venv/
+**/venv/
+**/node_modules/
+**/.next/
+**/__pycache__/
+*.py[cod]
+
+backend/.env

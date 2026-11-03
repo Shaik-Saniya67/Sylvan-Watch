@@ -1,0 +1,15 @@
+# UNTESTED deployment blueprint. Trained weights are NOT in Git: upload them to the /data disk
+# (storage/models, storage/results) before the first detection. See README "Deployment".
+services:
+  - type: web
+    name: sylvan-watch-api
+    runtime: docker
+    dockerContext: backend
+    dockerfilePath: backend/Dockerfile
+    healthCheckPath: /api/health
+    disk: { name: sylvan-data, mountPath: /data, sizeGB: 5 }
+    envVars:
+      - { key: SYLVAN_EE_PROJECT, sync: false }
+      - { key: SYLVAN_EE_SERVICE_ACCOUNT, sync: false }
+      - { key: SYLVAN_EE_PRIVATE_KEY_FILE, value: /data/ee-key.json }
+      - { key: SYLVAN_CORS_ORIGINS, sync: false }   # e.g. ["https://your-app.vercel.app"]
