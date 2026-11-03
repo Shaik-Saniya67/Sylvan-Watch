@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { api, type MetricsReport } from "@/lib/api";
+import { api, type MetricsReport } from "../lib/api";
 
 const MODEL_NAMES: Record<string, string> = {
   spectral_baseline: "Spectral baseline",
