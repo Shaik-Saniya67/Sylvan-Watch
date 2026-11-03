@@ -202,3 +202,7 @@ cython_debug/
 *.py[cod]
 
 backend/.env
+# Include the production model required by Sylvan Watch
+!backend/storage/
+!backend/storage/models/
+!backend/storage/models/random_forest.joblib

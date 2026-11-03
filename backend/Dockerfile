@@ -12,7 +12,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY sylvan ./sylvan
 COPY configs ./configs
 COPY scripts ./scripts
-
+COPY storage/models/random_forest.joblib ./storage/models/random_forest.joblib
 ENV SYLVAN_STORAGE_DIR=/data
 
 EXPOSE 8000
