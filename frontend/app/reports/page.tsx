@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { api, type RunStatus } from "@/lib/api";
+import { api, type RunStatus } from "../../lib/api";
 
 export default function Reports() {
   const [runs, setRuns] = useState<RunStatus[] | null>(null);
