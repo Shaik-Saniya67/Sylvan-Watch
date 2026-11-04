@@ -18,4 +18,4 @@ ENV SYLVAN_STORAGE_DIR=/app/storage
 
 EXPOSE 8000
 
-CMD ["sh", "-c", "mkdir -p /data/storage/models /data/storage/results && cp -n /app/storage/models/random_forest.joblib /data/storage/models/ 2>/dev/null || true; cp -n /app/storage/results/metrics.json /data/storage/results/ 2>/dev/null || true; exec uvicorn sylvan.api.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+CMD ["sh", "-c", "set -e; mkdir -p /data/storage/models /data/storage/results; cp -f /app/storage/models/random_forest.joblib /data/storage/models/random_forest.joblib; cp -f /app/storage/results/metrics.json /data/storage/results/metrics.json; export SYLVAN_STORAGE_DIR=/data/storage; exec uvicorn sylvan.api.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
