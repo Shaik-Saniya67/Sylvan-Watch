@@ -1,0 +1,592 @@
+{
+  "generated_at": "2026-11-04T02:01:55+00:00",
+  "label_source": "Hansen Global Forest Change (reference product; not field ground truth)",
+  "datasets": {
+    "hansen": "UMD/hansen/global_forest_change_2025_v1_13",
+    "sentinel2": "COPERNICUS/S2_SR_HARMONIZED",
+    "worldcover": "ESA/WorldCover/v200",
+    "tree_cover_threshold_percent": 30
+  },
+  "sites": [
+    {
+      "name": "rondonia_a",
+      "bbox": [
+        -63.6,
+        -9.85,
+        -63.35,
+        -9.6
+      ],
+      "split": "train",
+      "season_months": [
+        6,
+        8
+      ],
+      "before_year": 2019,
+      "after_year": 2023,
+      "note": "Amazon deforestation arc, Brazil"
+    },
+    {
+      "name": "riau_sumatra",
+      "bbox": [
+        101.5,
+        0.45,
+        101.75,
+        0.7
+      ],
+      "split": "val",
+      "season_months": [
+        1,
+        12
+      ],
+      "before_year": 2019,
+      "after_year": 2023,
+      "note": "Year-round cloud: whole-year median"
+    },
+    {
+      "name": "hasdeo_arand",
+      "bbox": [
+        82.55,
+        22.3,
+        82.8,
+        22.55
+      ],
+      "split": "val",
+      "season_months": [
+        1,
+        4
+      ],
+      "before_year": 2019,
+      "after_year": 2023,
+      "note": "Central India mining-forest landscape"
+    },
+    {
+      "name": "rondonia_b",
+      "bbox": [
+        -62.4,
+        -11.2,
+        -62.15,
+        -10.95
+      ],
+      "split": "test",
+      "season_months": [
+        6,
+        8
+      ],
+      "before_year": 2019,
+      "after_year": 2023,
+      "note": "Held-out Amazon site, >100 km from rondonia_a"
+    },
+    {
+      "name": "seshachalam_ap",
+      "bbox": [
+        79.2,
+        13.55,
+        79.45,
+        13.8
+      ],
+      "split": "test",
+      "season_months": [
+        1,
+        4
+      ],
+      "before_year": 2019,
+      "after_year": 2023,
+      "note": "Local Andhra Pradesh hills; expect little mapped loss, report separately"
+    }
+  ],
+  "splits": {
+    "train": {
+      "tiles": 36,
+      "sites": [
+        "rondonia_a"
+      ],
+      "forest_pixels": 2337048,
+      "loss_pixels": 319862,
+      "loss_rate": 0.13686582389407492
+    },
+    "val": {
+      "tiles": 66,
+      "sites": [
+        "hasdeo_arand",
+        "riau_sumatra"
+      ],
+      "forest_pixels": 2702099,
+      "loss_pixels": 334777,
+      "loss_rate": 0.12389516446288608
+    },
+    "test": {
+      "tiles": 72,
+      "sites": [
+        "rondonia_b",
+        "seshachalam_ap"
+      ],
+      "forest_pixels": 3675645,
+      "loss_pixels": 60163,
+      "loss_rate": 0.01636801160068505
+    }
+  },
+  "split_strategy": "Whole sites are assigned to train, validation or test, so no test pixel neighbours a training pixel.",
+  "data_notes": [
+    "seshachalam_ap is an incomplete download (26 chips on disk; other sites have full 6x6 or 5x6 grids). Its per-site test scores are reported separately and must not be treated as a complete-site result.",
+    "Hansen experiment window is 2019-2023. lossyear encoding: 20-23 = calendar years 2020-2023 (loss in (before_year, after_year] with before_year=2019 and after_year=2023).",
+    "Class imbalance is severe on hasdeo_arand (validation) and seshachalam_ap (test); pooled test metrics are dominated by rondonia_b."
+  ],
+  "models": {
+    "spectral_baseline": {
+      "threshold": 0.5,
+      "validation": {
+        "precision": 0.5913323272302742,
+        "recall": 0.43422636561054073,
+        "f1": 0.5007457673825804,
+        "iou": 0.33399656741897016,
+        "mean_iou": 0.6103102486021409,
+        "accuracy": 0.8927233976253276,
+        "classwise": {
+          "loss": {
+            "precision": 0.5913323272302742,
+            "recall": 0.43422636561054073,
+            "iou": 0.33399656741897016
+          },
+          "stable": {
+            "precision": 0.9228878305525542,
+            "recall": 0.957562173629105,
+            "iou": 0.8866239297853117
+          }
+        },
+        "confusion_matrix": [
+          [
+            2266858,
+            100464
+          ],
+          [
+            189408,
+            145369
+          ]
+        ],
+        "support": {
+          "loss_pixels": 334777,
+          "stable_pixels": 2367322
+        }
+      },
+      "test": {
+        "precision": 0.2744657969794735,
+        "recall": 0.6829779100111364,
+        "f1": 0.39157200579400775,
+        "iou": 0.24345013093813322,
+        "mean_iou": 0.6041586783872919,
+        "accuracy": 0.9652599747799366,
+        "classwise": {
+          "loss": {
+            "precision": 0.2744657969794735,
+            "recall": 0.6829779100111364,
+            "iou": 0.24345013093813322
+          },
+          "stable": {
+            "precision": 0.9945906562115705,
+            "recall": 0.9699572560449755,
+            "iou": 0.9648672258364505
+          }
+        },
+        "confusion_matrix": [
+          [
+            3506863,
+            108619
+          ],
+          [
+            19073,
+            41090
+          ]
+        ],
+        "support": {
+          "loss_pixels": 60163,
+          "stable_pixels": 3615482
+        },
+        "f1_ci95_tile_bootstrap": [
+          0.33496271742095146,
+          0.44657506525464635
+        ]
+      },
+      "per_site_test": {
+        "rondonia_b": {
+          "precision": 0.2725826864378676,
+          "recall": 0.6955290379401454,
+          "f1": 0.3916679632799129,
+          "iou": 0.24352431857208504,
+          "mean_iou": 0.5671968647184104,
+          "accuracy": 0.8945731887666751,
+          "classwise": {
+            "loss": {
+              "precision": 0.2725826864378676,
+              "recall": 0.6955290379401454,
+              "iou": 0.24352431857208504
+            },
+            "stable": {
+              "precision": 0.9830301781970852,
+              "recall": 0.9047839675694447,
+              "iou": 0.8908694108647356
+            }
+          },
+          "confusion_matrix": [
+            [
+              1021331,
+              107481
+            ],
+            [
+              17631,
+              40276
+            ]
+          ],
+          "support": {
+            "loss_pixels": 57907,
+            "stable_pixels": 1128812
+          }
+        },
+        "seshachalam_ap": {
+          "precision": 0.41700819672131145,
+          "recall": 0.3608156028368794,
+          "f1": 0.3868821292775665,
+          "iou": 0.23983500294637597,
+          "mean_iou": 0.619399036066486,
+          "accuracy": 0.9989634083134653,
+          "classwise": {
+            "loss": {
+              "precision": 0.41700819672131145,
+              "recall": 0.3608156028368794,
+              "iou": 0.23983500294637597
+            },
+            "stable": {
+              "precision": 0.9994201789001413,
+              "recall": 0.9995423598627884,
+              "iou": 0.998963069186596
+            }
+          },
+          "confusion_matrix": [
+            [
+              2485532,
+              1138
+            ],
+            [
+              1442,
+              814
+            ]
+          ],
+          "support": {
+            "loss_pixels": 2256,
+            "stable_pixels": 2486670
+          }
+        }
+      },
+      "calibration": null,
+      "independent_reference": null
+    },
+    "random_forest": {
+      "threshold": 0.55,
+      "validation": {
+        "precision": 0.7783834795585239,
+        "recall": 0.6060810629165087,
+        "f1": 0.6815103921753034,
+        "iou": 0.5168871928385463,
+        "mean_iou": 0.7205026097743628,
+        "accuracy": 0.929816043009527,
+        "classwise": {
+          "loss": {
+            "precision": 0.7783834795585239,
+            "recall": 0.6060810629165087,
+            "iou": 0.5168871928385463
+          },
+          "stable": {
+            "precision": 0.9459844812134538,
+            "recall": 0.9755973205166006,
+            "iou": 0.9241180267101793
+          }
+        },
+        "confusion_matrix": [
+          [
+            2309553,
+            57769
+          ],
+          [
+            131875,
+            202902
+          ]
+        ],
+        "support": {
+          "loss_pixels": 334777,
+          "stable_pixels": 2367322
+        }
+      },
+      "test": {
+        "precision": 0.4111623577201371,
+        "recall": 0.8075561391552948,
+        "f1": 0.5448948005921673,
+        "iou": 0.37447106973015887,
+        "mean_iou": 0.6760476857531266,
+        "accuracy": 0.9779200657299604,
+        "classwise": {
+          "loss": {
+            "precision": 0.4111623577201371,
+            "recall": 0.8075561391552948,
+            "iou": 0.37447106973015887
+          },
+          "stable": {
+            "precision": 0.9967454490257148,
+            "recall": 0.9807549864720665,
+            "iou": 0.9776243017760942
+          }
+        },
+        "confusion_matrix": [
+          [
+            3545902,
+            69580
+          ],
+          [
+            11578,
+            48585
+          ]
+        ],
+        "support": {
+          "loss_pixels": 60163,
+          "stable_pixels": 3615482
+        },
+        "f1_ci95_tile_bootstrap": [
+          0.48671743413228447,
+          0.5982905802516106
+        ]
+      },
+      "per_site_test": {
+        "rondonia_b": {
+          "precision": 0.41014445511940706,
+          "recall": 0.8256860137807174,
+          "f1": 0.5480533920209991,
+          "iou": 0.37746111944422517,
+          "mean_iou": 0.6541109335194233,
+          "accuracy": 0.9335504024120285,
+          "classwise": {
+            "loss": {
+              "precision": 0.41014445511940706,
+              "recall": 0.8256860137807174,
+              "iou": 0.37746111944422517
+            },
+            "stable": {
+              "precision": 0.9905676157298604,
+              "recall": 0.9390837446802479,
+              "iou": 0.9307607475946215
+            }
+          },
+          "confusion_matrix": [
+            [
+              1060049,
+              68763
+            ],
+            [
+              10094,
+              47813
+            ]
+          ],
+          "support": {
+            "loss_pixels": 57907,
+            "stable_pixels": 1128812
+          }
+        },
+        "seshachalam_ap": {
+          "precision": 0.4858401510383889,
+          "recall": 0.3421985815602837,
+          "f1": 0.4015604681404421,
+          "iou": 0.25122030589000977,
+          "mean_iou": 0.6251477619515213,
+          "accuracy": 0.9990755048563115,
+          "classwise": {
+            "loss": {
+              "precision": 0.4858401510383889,
+              "recall": 0.3421985815602837,
+              "iou": 0.25122030589000977
+            },
+            "stable": {
+              "precision": 0.999403377990196,
+              "recall": 0.9996714481615976,
+              "iou": 0.999075218013033
+            }
+          },
+          "confusion_matrix": [
+            [
+              2485853,
+              817
+            ],
+            [
+              1484,
+              772
+            ]
+          ],
+          "support": {
+            "loss_pixels": 2256,
+            "stable_pixels": 2486670
+          }
+        }
+      },
+      "calibration": {
+        "brier": 0.023402566733593314,
+        "ece": 0.07255517109553117
+      },
+      "independent_reference": null
+    },
+    "siamese_unet": {
+      "threshold": 0.25,
+      "validation": {
+        "precision": 0.16573219689311733,
+        "recall": 0.9084644405081591,
+        "f1": 0.2803244811656399,
+        "iou": 0.16301010167060526,
+        "mean_iou": 0.25589618065115494,
+        "accuracy": 0.4220796499314052,
+        "classwise": {
+          "loss": {
+            "precision": 0.16573219689311733,
+            "recall": 0.9084644405081591,
+            "iou": 0.16301010167060526
+          },
+          "stable": {
+            "precision": 0.9646556218368373,
+            "recall": 0.3532971011125652,
+            "iou": 0.34878225963170456
+          }
+        },
+        "confusion_matrix": [
+          [
+            836368,
+            1530954
+          ],
+          [
+            30644,
+            304133
+          ]
+        ],
+        "support": {
+          "loss_pixels": 334777,
+          "stable_pixels": 2367322
+        }
+      },
+      "test": {
+        "precision": 0.09362061746964599,
+        "recall": 0.8028190083606204,
+        "f1": 0.16768649915375602,
+        "iou": 0.09151627113826914,
+        "mean_iou": 0.4796664073216147,
+        "accuracy": 0.8695535069355175,
+        "classwise": {
+          "loss": {
+            "precision": 0.09362061746964599,
+            "recall": 0.8028190083606204,
+            "iou": 0.09151627113826914
+          },
+          "stable": {
+            "precision": 0.9962455688502795,
+            "recall": 0.8706639944549579,
+            "iou": 0.8678165435049603
+          }
+        },
+        "confusion_matrix": [
+          [
+            3147870,
+            467612
+          ],
+          [
+            11863,
+            48300
+          ]
+        ],
+        "support": {
+          "loss_pixels": 60163,
+          "stable_pixels": 3615482
+        },
+        "f1_ci95_tile_bootstrap": [
+          0.10822612370367662,
+          0.24700146555272065
+        ]
+      },
+      "per_site_test": {
+        "rondonia_b": {
+          "precision": 0.32515328998413884,
+          "recall": 0.8177767800093253,
+          "f1": 0.46530022697572043,
+          "iou": 0.3031864832160624,
+          "mean_iou": 0.6038315078688574,
+          "accuracy": 0.9082883142513097,
+          "classwise": {
+            "loss": {
+              "precision": 0.32515328998413884,
+              "recall": 0.8177767800093253,
+              "iou": 0.3031864832160624
+            },
+            "stable": {
+              "precision": 0.989864371614093,
+              "recall": 0.9129314713167471,
+              "iou": 0.9044765325216524
+            }
+          },
+          "confusion_matrix": [
+            [
+              1030528,
+              98284
+            ],
+            [
+              10552,
+              47355
+            ]
+          ],
+          "support": {
+            "loss_pixels": 57907,
+            "stable_pixels": 1128812
+          }
+        },
+        "seshachalam_ap": {
+          "precision": 0.0025521709657468947,
+          "recall": 0.41888297872340424,
+          "f1": 0.005073430524871889,
+          "iou": 0.002543166551842921,
+          "mean_iou": 0.42678568487074875,
+          "accuracy": 0.8510847650753779,
+          "classwise": {
+            "loss": {
+              "precision": 0.0025521709657468947,
+              "recall": 0.41888297872340424,
+              "iou": 0.002543166551842921
+            },
+            "stable": {
+              "precision": 0.9993812106088161,
+              "recall": 0.8514768746958784,
+              "iou": 0.8510282031896546
+            }
+          },
+          "confusion_matrix": [
+            [
+              2117342,
+              369328
+            ],
+            [
+              1311,
+              945
+            ]
+          ],
+          "support": {
+            "loss_pixels": 2256,
+            "stable_pixels": 2486670
+          }
+        }
+      },
+      "calibration": {
+        "brier": 0.05349679018817312,
+        "ece": 0.12159604071102782
+      },
+      "independent_reference": null
+    }
+  },
+  "selected_model": "random_forest",
+  "selection_criterion": "Highest validation F1 (test data were not used for selection or thresholds).",
+  "training_history": null,
+  "caveats": [
+    "Labels come from Hansen Global Forest Change (Landsat-derived, 30 m, annual). Scores measure agreement with that reference product, not field-verified accuracy.",
+    "Hansen counts plantation harvest and fire as loss, so some 'false positives' may be correct detections of legal harvesting or burns; imagery alone cannot establish legality.",
+    "Metrics hold for the evaluated sites, seasons and years only; no global generalisation is claimed.",
+    "Selective logging of individual trees is below the detection limit of 10 m optical imagery."
+  ]
+}
