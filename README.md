@@ -295,19 +295,19 @@ selected by validation F1, and test sites are used for reporting.
 
 ### CI/CD
 
-Continuous integration runs on **GitHub Actions** (`.github/workflows/`). Deployment stays with the existing Git integrations: Vercel deploys the frontend and Render
-deploys the backend. The workflows contain no deployment steps and use no secrets.
+Continuous integration and optional deployment jobs run on **GitHub Actions** (`.github/workflows/`). Vercel and Render Git integrations can also deploy
+directly from the repository. The GitHub Actions deployment jobs run only when their deployment secrets are configured; otherwise they skip the deploy and
+health-check steps, leaving deployment to the connected Vercel and Render Git integrations.
 
 | Workflow | File | Runs | Steps |
 |---|---|---|---|
-| Backend CI | `backend-ci.yml` | Python 3.12 (same minor version as `backend/Dockerfile`) | install from `backend/requirements-dev.txt`, `compileall` on `sylvan`, `scripts` and `tests`, then `pytest` |
-| Frontend CI | `frontend-ci.yml` | Node 22 | `npm ci` from `package-lock.json`, `npm run typecheck`, `npm run build` |
+| Backend CI | `backend-ci.yml` | Python 3.12 (same minor version as `backend/Dockerfile`) | install from `backend/requirements-dev.txt`, compile modules, then run backend tests (Siamese tests are non-blocking) |
+| Frontend CI | `frontend-ci.yml` | Node 22 | `npm ci`, `npm run typecheck`, `npm run build` |
+| CI/CD | `ci-cd.yml` | Python 3.12 and Node 22 | validates dependencies, compiles and tests the backend, type-checks and builds the frontend; includes optional Render and Vercel deploy and health-check jobs |
 
-- **Triggers:** every pull request and every push to `main`. A newer run on the same branch cancels the older one. Jobs have read-only repository permissions.
-- **Release flow:** a push to `main` triggers CI and, independently, the Vercel and Render deployments. CI does not gate them. To make Render wait for green checks,
-  enable its auto-deploy option "After CI Checks Pass".
-- **No credentials needed:** tests use synthetic inputs and a stubbed Earth Engine download, so CI cannot assess detection quality on real imagery. Model accuracy
-  comes from the real-data experiment in [section 6](#6-results).
+- **Triggers:** all three workflows run on pull requests and pushes to `main`; the CI/CD workflow can also be started manually. A newer run on the same branch cancels the older run. Jobs use read-only repository permissions.
+- **Deployment secrets:** the CI/CD workflow needs `RENDER_DEPLOY_HOOK_URL` for its Render deploy and `VERCEL_TOKEN`, `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` for its Vercel deploy. If these are absent, the respective deployment and health-check steps are skipped; the workflow reports that the Git integrations remain responsible for deployment.
+- **Test data:** automated tests use synthetic inputs and a stubbed Earth Engine download, so CI does not assess detection quality on real imagery. Model accuracy comes from the real-data experiment in [section 6](#6-results).
 - **PyTorch in CI:** the backend job installs the CPU build from the official PyTorch index to avoid downloading CUDA libraries. Requirement files are unchanged.
 - **Siamese U-Net tests:** run in their own step marked `continue-on-error` because they had not been executed before CI was added. After one green run, remove that line
   to make them blocking.
@@ -377,8 +377,9 @@ python scripts/evaluate.py --reference my_polygons.geojson   # optional independ
 ```
 
 - Sites, years and seasons are defined in `backend/configs/sites.json`; whole sites are assigned to train, validation or test.
-- Chips, weights and results are written under `storage/` and are git-ignored. Weights and `metrics.json` must be available to the backend that serves
-  `/api/metrics` and detections.
+- Downloaded training chips and generated run artifacts under `storage/` are git-ignored. The repository intentionally includes the production
+  Random Forest model (`storage/models/random_forest.joblib`) and evaluation report (`storage/results/metrics.json`); both must be present for the
+  backend to serve `/api/metrics` and run detections.
 - Training is seeded (default 42). GPU runs can still differ slightly because some CUDA kernels are non-deterministic.
 - `--epochs` sets the Siamese U-Net length; training stops early after 8 epochs without validation improvement and keeps the best validation checkpoint.
 - Reference file for `--reference`: GeoJSON in WGS84, each feature with `properties.kind` set to `"loss"` or `"stable"`. Only pixels inside these polygons are scored.
