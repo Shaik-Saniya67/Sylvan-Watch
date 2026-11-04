@@ -26,9 +26,29 @@ export default function Workspace() {
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    api.health().then(setHealth).catch((e: ApiError) => setHealthError(e.message));
-    return () => { if (timer.current) clearInterval(timer.current); };
-  }, []);
+  let cancelled = false;
+
+  const checkHealth = async () => {
+    try {
+      const result = await api.health();
+      if (!cancelled) {
+        setHealth(result);
+        setHealthError(null);
+      }
+    } catch (e) {
+      if (!cancelled) setHealthError((e as ApiError).message);
+    }
+  };
+
+  checkHealth();
+  const healthTimer = setInterval(checkHealth, 10000);
+
+  return () => {
+    cancelled = true;
+    clearInterval(healthTimer);
+    if (timer.current) clearInterval(timer.current);
+  };
+}, []);
 
   const size = bbox ? bboxSizeKm(bbox) : null;
   const tooBig = size ? Math.max(...size) > MAX_SIDE_KM : false;
