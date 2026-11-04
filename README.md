@@ -7,7 +7,7 @@ Sylvan Watch compares cloud-masked Sentinel-2 composites from two periods, flags
 and turns the result into georeferenced polygons with estimated area. Three detectors are implemented and compared against
 Hansen forest-loss reference labels on geographically held-out sites.
 
-Author: Shaik Saniya · Team: `<team name>` · Members: `<add members if required by the submission form>`
+Author: Shaik Saniya · 
 
 ## Live demo and source
 
