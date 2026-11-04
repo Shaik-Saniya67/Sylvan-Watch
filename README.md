@@ -12,7 +12,7 @@ georeferenced polygons, and reports how closely three different detectors agree 
 with confidence intervals and every limitation stated.
 ## Project Screenshots
 
-![Sylvan Watch Dashboard](docs/images/dashboard.png)
+![Sylvan Watch dashboard showing detected forest-loss patches over satellite imagery](docs/screenshots/Screenshot_2026-11-03_173610.png)
 
 ![Change analysis view: detected forest-loss patches over satellite imagery with area, patch count and scanned-forest share](docs/screenshots/Screenshot_2026-11-03_173610.png)
 *Change analysis view captured on a local development server on 3 Nov 2026, before the final evaluation. It illustrates the interface and output, not the final model's accuracy.*
