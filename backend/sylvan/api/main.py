@@ -39,6 +39,8 @@ app.add_middleware(
         *settings.cors_origins,
         "https://project-mzb0n.vercel.app",
     ])),
+    # Vercel assigns unique URLs to production/preview deployments too.
+    allow_origin_regex=r"https://project-mzb0n(?:-[a-z0-9-]+)?\.vercel\.app",
     allow_methods=["*"],
     allow_headers=["*"],
 )
