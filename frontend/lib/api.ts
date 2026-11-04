@@ -1,11 +1,7 @@
 import type { FeatureCollection, Polygon } from "geojson";
 
 /** Typed client for the Sylvan Watch FastAPI backend. */
-const configuredApiUrl = process.env.NEXT_PUBLIC_API_URL?.trim();
-export const API_URL =
-  configuredApiUrl && !/localhost|127\\.0\\.0\\.1/.test(configuredApiUrl)
-    ? configuredApiUrl.replace(/\\/+$/, "")
-    : "https://sylvan-watch-api.onrender.com";
+export const API_URL = "https://sylvan-watch-api.onrender.com";
 
 export type ModelChoice = "best" | "spectral_baseline" | "random_forest" | "siamese_unet";
 
@@ -68,8 +64,9 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   let response: Response;
   try {
     response = await fetch(`${API_URL}${path}`, { cache: "no-store", ...init });
-  } catch {
-    throw new ApiError(`Cannot reach the API at ${API_URL}. Is the backend running?`, 0);
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : String(error);
+    throw new ApiError(`Cannot reach the API at ${API_URL}. Browser network error: ${reason}`, 0);
   }
   if (!response.ok) {
     const body = await response.json().catch(() => null);
