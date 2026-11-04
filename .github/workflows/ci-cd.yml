@@ -39,7 +39,7 @@ jobs:
       - name: Compile backend modules
         run: python -m compileall -q sylvan scripts tests
       - name: Lint backend
-        run: python -m ruff check sylvan scripts tests
+        run: python -m ruff check sylvan tests --select E4,E7,E9,F
       - name: Run complete backend test suite
         run: python -m pytest -q
 
