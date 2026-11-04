@@ -9,6 +9,8 @@ services:
     healthCheckPath: /api/health
     disk: { name: sylvan-data, mountPath: /data, sizeGB: 5 }
     envVars:
+      # Persist run status/results across requests and container restarts.
+      - { key: SYLVAN_STORAGE_DIR, value: /data/storage }
       - { key: SYLVAN_EE_PROJECT, sync: false }
       - { key: SYLVAN_EE_SERVICE_ACCOUNT, sync: false }
       - { key: SYLVAN_EE_PRIVATE_KEY_FILE, value: /data/ee-key.json }
