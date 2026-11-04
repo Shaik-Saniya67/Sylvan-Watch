@@ -1,0 +1,131 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-cd-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Backend tests and dependency validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            backend/requirements.txt
+            backend/requirements-dev.txt
+      - name: Install backend dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt --extra-index-url https://download.pytorch.org/whl/cpu
+      - name: Validate installed dependencies
+        run: python -m pip check
+      - name: Compile backend modules
+        run: python -m compileall -q sylvan scripts tests
+      - name: Lint backend
+        run: python -m ruff check sylvan scripts tests
+      - name: Run complete backend test suite
+        run: python -m pytest -q
+
+  frontend:
+    name: Frontend dependency validation and production build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: frontend
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Type check
+        run: npm run typecheck
+      - name: Build production frontend
+        run: npm run build
+
+  deploy-render:
+    name: Deploy backend to Render
+    needs: [backend, frontend]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.RENDER_DEPLOY_HOOK_URL != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Trigger Render deployment
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: curl --fail --show-error --silent --request POST "$RENDER_DEPLOY_HOOK_URL"
+      - name: Verify deployed backend health
+        run: |
+          for attempt in $(seq 1 24); do
+            if curl --fail --silent --show-error https://sylvan-watch-api.onrender.com/api/health; then
+              echo "Render health check passed."
+              exit 0
+            fi
+            echo "Backend not healthy yet (attempt $attempt/24); waiting 15 seconds."
+            sleep 15
+          done
+          echo "Render deployment did not become healthy in 6 minutes."
+          exit 1
+
+  deploy-vercel:
+    name: Deploy frontend to Vercel
+    needs: [backend, frontend]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.VERCEL_TOKEN != '' && secrets.VERCEL_ORG_ID != '' && secrets.VERCEL_PROJECT_ID != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+      - name: Pull production project settings
+        working-directory: frontend
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+      - name: Build and deploy production frontend
+        working-directory: frontend
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          vercel build --prod --token="$VERCEL_TOKEN"
+          vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN"
+      - name: Verify production frontend
+        run: |
+          for attempt in $(seq 1 18); do
+            if curl --fail --silent --show-error --output /dev/null https://project-mzb0n.vercel.app/; then
+              echo "Vercel production URL returned a successful response."
+              exit 0
+            fi
+            echo "Frontend not ready yet (attempt $attempt/18); waiting 10 seconds."
+            sleep 10
+          done
+          echo "Vercel production URL did not become healthy in 3 minutes."
+          exit 1
