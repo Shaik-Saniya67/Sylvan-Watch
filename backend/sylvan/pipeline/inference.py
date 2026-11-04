@@ -75,7 +75,10 @@ def run_detection(request: DetectionRequest, settings: Settings, run_dir: Path, 
     domain = np.zeros((height, width), bool)
     valid = np.zeros((height, width), bool)
     landcover = np.zeros((height, width), np.uint8)
-    before_rgb = np.zeros((6, height, width), np.float32)
+    # Preview images only need B2/B3/B4. Keep those three bands instead of
+    # retaining all six float32 bands for both dates across the full AOI.
+    # Model inference still receives the complete Pair for every tile.
+    before_rgb = np.zeros((3, height, width), np.float32)
     after_rgb = np.zeros_like(before_rgb)
     for tile, path in tiles:
         pair = read_chip(path)
@@ -84,7 +87,7 @@ def run_detection(request: DetectionRequest, settings: Settings, run_dir: Path, 
                                   settings.tree_cover_threshold)
         score[window] = detector.predict_score(pair)
         domain[window], valid[window], landcover[window] = forest & pair.valid, pair.valid, pair.landcover
-        before_rgb[(slice(None), *window)], after_rgb[(slice(None), *window)] = pair.before, pair.after
+        before_rgb[(slice(None), *window)], after_rgb[(slice(None), *window)] = pair.before[:3], pair.after[:3]
         crs = pair.crs
 
     progress("vectorising", 0.85)
