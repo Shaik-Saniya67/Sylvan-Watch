@@ -33,7 +33,12 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins,
+    # Keep the production Vercel origin explicitly allowed even when the
+    # Render environment variable is unset or still contains localhost values.
+    allow_origins=list(dict.fromkeys([
+        *settings.cors_origins,
+        "https://project-mzb0n.vercel.app",
+    ])),
     allow_methods=["*"],
     allow_headers=["*"],
 )
