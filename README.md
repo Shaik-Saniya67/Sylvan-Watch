@@ -130,3 +130,9 @@ below 10 m resolution; results are valid only for evaluated sites, seasons and y
 
 ## AI tools used
 Claude (Anthropic) generated the code from the project specification; the author must review, run and validate it.
+
+
+
+
+
+ 

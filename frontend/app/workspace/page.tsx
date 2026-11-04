@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { MapPicker } from "@/components/MapPicker";
 import { bboxSizeKm, type BBox } from "@/components/map";
 import { StageProgress } from "@/components/StageProgress";
-import { api, ApiError, type Health, type ModelChoice, type RunStatus } from "@/lib/api";
+import { api, ApiError, type Health, type ModelChoice, type RunStatus } from "../../lib/api";
 
 const YEARS = [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026];
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];

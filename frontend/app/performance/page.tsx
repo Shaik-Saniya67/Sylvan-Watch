@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { ConfusionMatrix } from "@/components/ConfusionMatrix";
 import { LineDraw } from "@/components/motion/LineDraw";
-import { api, ApiError, type MetricsReport } from "@/lib/api";
+import { api, ApiError, type MetricsReport } from "../../lib/api";
 
 const NAMES: Record<string, string> = { spectral_baseline: "Spectral baseline", random_forest: "Random Forest", siamese_unet: "Siamese U-Net" };
 const pct = (v: number | null | undefined) => (v == null ? "—" : v.toFixed(3));
