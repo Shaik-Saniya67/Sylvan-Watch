@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+﻿FROM python:3.12-slim
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends libexpat1 \
@@ -13,7 +13,8 @@ COPY sylvan ./sylvan
 COPY configs ./configs
 COPY scripts ./scripts
 COPY storage/models/random_forest.joblib ./storage/models/random_forest.joblib
-ENV SYLVAN_STORAGE_DIR=/data
+COPY storage/results/metrics.json ./storage/results/metrics.json
+ENV SYLVAN_STORAGE_DIR=/app/storage
 
 EXPOSE 8000
 
