@@ -1,0 +1,57 @@
+# Backend CI: compile check + automated tests.
+# CI only. Deployment is handled by the existing Render Git integration, not by this workflow.
+name: Backend CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backend-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  BACKEND_DIR: backend
+
+jobs:
+  test:
+    name: Compile and test (Python 3.12)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: ${{ env.BACKEND_DIR }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"            # same minor version as backend/Dockerfile
+          cache: pip
+          cache-dependency-path: |
+            ${{ env.BACKEND_DIR }}/requirements.txt
+            ${{ env.BACKEND_DIR }}/requirements-dev.txt
+
+      - name: Install dependencies
+        # requirements-dev.txt includes requirements.txt. The extra index only supplies the CPU build of
+        # PyTorch, so CI avoids downloading several GB of CUDA libraries. Requirement files are unchanged.
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt --extra-index-url https://download.pytorch.org/whl/cpu
+
+      - name: Compile check
+        run: python -m compileall -q sylvan scripts tests
+
+      - name: Run tests
+        # Tests use synthetic inputs and a stubbed Earth Engine download: no credentials or network data needed.
+        run: python -m pytest -q --ignore=tests/test_siamese.py
+
+      - name: Run Siamese U-Net tests (non-blocking until first confirmed green)
+        # These tests need PyTorch and had not been executed before this workflow was added. A failure shows up as a
+        # warning annotation without failing the build. After one green run, delete the next line to make them blocking.
+        continue-on-error: true
+        run: python -m pytest -q tests/test_siamese.py

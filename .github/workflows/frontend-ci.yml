@@ -1,0 +1,46 @@
+# Frontend CI: type check + production build.
+# CI only. Deployment is handled by the existing Vercel Git integration, not by this workflow.
+name: Frontend CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: frontend-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FRONTEND_DIR: frontend
+  NEXT_TELEMETRY_DISABLED: "1"
+
+jobs:
+  build:
+    name: Type check and build (Node 22)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: ${{ env.FRONTEND_DIR }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22                  # the project README requires Node 20+ and was verified on Node 22
+          cache: npm
+          cache-dependency-path: ${{ env.FRONTEND_DIR }}/package-lock.json
+
+      - name: Install dependencies (lockfile)
+        run: npm ci
+
+      - name: Type check
+        # The project defines no ESLint script; its "typecheck" script (tsc --noEmit) is the static check.
+        run: npm run typecheck
+
+      - name: Production build
+        run: npm run build
