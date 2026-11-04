@@ -1,7 +1,11 @@
 import type { FeatureCollection, Polygon } from "geojson";
 
 /** Typed client for the Sylvan Watch FastAPI backend. */
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://sylvan-watch-api.onrender.com";
+const configuredApiUrl = process.env.NEXT_PUBLIC_API_URL?.trim();
+export const API_URL =
+  configuredApiUrl && !/localhost|127\\.0\\.0\\.1/.test(configuredApiUrl)
+    ? configuredApiUrl.replace(/\\/+$/, "")
+    : "https://sylvan-watch-api.onrender.com";
 
 export type ModelChoice = "best" | "spectral_baseline" | "random_forest" | "siamese_unet";
 
