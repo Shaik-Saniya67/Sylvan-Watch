@@ -69,15 +69,28 @@ jobs:
   deploy-render:
     name: Deploy backend to Render
     needs: [backend, frontend]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.RENDER_DEPLOY_HOOK_URL != ''
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
+      - name: Check Render deployment configuration
+        id: render-config
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -n "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "Render deploy hook is not configured; Render Git auto-deploy remains responsible for releases."
+          fi
       - name: Trigger Render deployment
+        if: steps.render-config.outputs.configured == 'true'
         env:
           RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
         run: curl --fail --show-error --silent --request POST "$RENDER_DEPLOY_HOOK_URL"
       - name: Verify deployed backend health
+        if: steps.render-config.outputs.configured == 'true'
         run: |
           for attempt in $(seq 1 24); do
             if curl --fail --silent --show-error https://sylvan-watch-api.onrender.com/api/health; then
@@ -93,17 +106,34 @@ jobs:
   deploy-vercel:
     name: Deploy frontend to Vercel
     needs: [backend, frontend]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.VERCEL_TOKEN != '' && secrets.VERCEL_ORG_ID != '' && secrets.VERCEL_PROJECT_ID != ''
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
+      - name: Check Vercel deployment configuration
+        id: vercel-config
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          if [ -n "$VERCEL_TOKEN" ] && [ -n "$VERCEL_ORG_ID" ] && [ -n "$VERCEL_PROJECT_ID" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "Vercel credentials are not configured; Vercel Git integration remains responsible for releases."
+          fi
       - uses: actions/checkout@v6
+        if: steps.vercel-config.outputs.configured == 'true'
       - uses: actions/setup-node@v6
+        if: steps.vercel-config.outputs.configured == 'true'
         with:
           node-version: 22
       - name: Install Vercel CLI
+        if: steps.vercel-config.outputs.configured == 'true'
         run: npm install --global vercel@latest
       - name: Pull production project settings
+        if: steps.vercel-config.outputs.configured == 'true'
         working-directory: frontend
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
@@ -111,6 +141,7 @@ jobs:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
       - name: Build and deploy production frontend
+        if: steps.vercel-config.outputs.configured == 'true'
         working-directory: frontend
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
@@ -118,6 +149,7 @@ jobs:
           vercel build --prod --token="$VERCEL_TOKEN"
           vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN"
       - name: Verify production frontend
+        if: steps.vercel-config.outputs.configured == 'true'
         run: |
           for attempt in $(seq 1 18); do
             if curl --fail --silent --show-error --output /dev/null https://project-mzb0n.vercel.app/; then
