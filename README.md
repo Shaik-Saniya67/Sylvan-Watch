@@ -7,6 +7,8 @@
 
 **Neural Storm 2026 · Problem statement GP-04: Illegal Deforestation Detection** · Built by Shaik Saniya
 
+> **Project history:** Sylvan Watch was originally developed for Neural Storm 2026. This repository documents that existing implementation, its real-data evaluation, current capabilities and known limitations. Any later changes or extensions should be described separately and should not be represented as work created during a different event unless they were actually developed during that event.
+
 Sylvan Watch compares cloud-masked Sentinel-2 imagery from two years, flags where forest canopy disappeared, measures the affected area as
 georeferenced polygons, and reports how closely three different detectors agree with Hansen reference labels on **geographically held-out sites**,
 with confidence intervals and every limitation stated.
