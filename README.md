@@ -1,22 +1,25 @@
 # EcoSentinel
 
-### Satellite forest-loss detection, validated on sites the models never saw
+### Satellite forest-loss monitoring, validated on sites the models never saw
 
 [![Backend CI](https://github.com/Shaik-Saniya67/EcoSentinel/actions/workflows/backend-ci.yml/badge.svg?branch=main)](https://github.com/Shaik-Saniya67/EcoSentinel/actions/workflows/backend-ci.yml)
 [![Frontend CI](https://github.com/Shaik-Saniya67/EcoSentinel/actions/workflows/frontend-ci.yml/badge.svg?branch=main)](https://github.com/Shaik-Saniya67/EcoSentinel/actions/workflows/frontend-ci.yml)
 
-**Green Shift Hacks 2026 · Sustainability-focused forest monitoring** · Built by Shaik Saniya
+**Green Shift Hacks 2026 · Sustainability area: ecosystems and climate resilience** · Built by Shaik Saniya
 
-> **Project context:** EcoSentinel is a satellite-based forest-monitoring project focused on identifying and analysing forest-cover loss. This README documents the implementation, evaluation, capabilities and limitations. Any additions made during a particular event should be described separately from the existing implementation.
+**In three lines**
+
+- **Problem:** forest cover is lost faster than agencies can notice it, and clearing that goes unnoticed cannot be answered.
+- **Who it is for:** forest departments, conservation NGOs and due-diligence teams that need to decide where to look first.
+- **What it does:** compares real Sentinel-2 imagery from two years, flags where canopy disappeared, and returns georeferenced loss areas with hectares and a model confidence, plus an honest measurement of how reliable each detector is.
+
+> **Development note:** the core detection pipeline, the real-data evaluation and the web app were built on 2 to 4 November 2026. Work done for Green Shift Hacks is listed in [section 13](#13-development-notes).
 
 EcoSentinel compares cloud-masked Sentinel-2 imagery from two years, flags where forest canopy disappeared, measures the affected area as
 georeferenced polygons, and reports how closely three different detectors agree with Hansen reference labels on **geographically held-out sites**,
 with confidence intervals and every limitation stated.
-## Project Screenshots
 
-![EcoSentinel dashboard showing detected forest-loss patches over satellite imagery](docs/screenshots/05-change-analysis.jpg)
-
-![Change analysis view: detected forest-loss patches over satellite imagery with area, patch count and scanned-forest share]
+![EcoSentinel change analysis: detected forest-loss patches over satellite imagery with area, patch count and scanned-forest share](docs/screenshots/05-change-analysis.jpg)
 *Change analysis view captured on a local development server on 3 Nov 2026, before the final evaluation. It illustrates the interface and output, not the final model's accuracy.*
 
 | | |
@@ -24,6 +27,9 @@ with confidence intervals and every limitation stated.
 | **Live app** | https://project-mzb0n.vercel.app/ |
 | **Backend API and OpenAPI docs** | https://sylvan-watch-api.onrender.com · https://sylvan-watch-api.onrender.com/docs |
 | **Source** | https://github.com/Shaik-Saniya67/EcoSentinel |
+
+<!-- DEMO VIDEO: Devpost requires a demo video or walkthrough. Add a row to the table above: | **Demo video** | <link> | -->
+<!-- TEAM: Devpost requires all team members. Add names after 'Built by' under the title if there are others. -->
 
 ## At a glance
 
@@ -38,12 +44,19 @@ with confidence intervals and every limitation stated.
 
 **Guide for judges**
 
-| Criterion | Where to look |
+| Green Shift Hacks criterion | Where to look |
 |---|---|
-| Technical implementation | [Technical approach](#5-technical-approach), [Results](#6-results), [Engineering quality](#7-engineering-quality) |
-| Impact and usefulness | [Why this matters](#1-why-this-matters), [Product tour](#2-product-tour), [Reading a detection result](#3-reading-a-detection-result) |
-| Documentation | This file: [problem](#1-why-this-matters), [approach](#5-technical-approach), [results](#6-results), [setup](#10-run-it-yourself), [screenshots](#2-product-tour) |
-| Demo | Live links above, [product tour](#2-product-tour), [try it in two minutes](#try-it-in-two-minutes) |
+| Environmental impact | [Environmental impact](#environmental-impact), [Why this matters](#1-why-this-matters), [What is measured today and what is not](#what-is-measured-today-and-what-is-not) |
+
+| Devpost requirement | Where to look |
+|---|---|
+| Problem and intended users | [Why this matters](#1-why-this-matters) |
+| Approach | [How it works](#4-how-it-works), [Technical approach](#5-technical-approach) |
+| Expected environmental benefit | [Environmental impact](#environmental-impact) |
+| Working prototype and demo | Live links above, [product tour](#2-product-tour), [try it in two minutes](#try-it-in-two-minutes) |
+| Tools used | [At a glance](#at-a-glance), [Credits](#14-credits-and-ai-tools-used) |
+| Limitations | [Limitations](#8-limitations-and-responsible-interpretation) |
+| Source code and build instructions | [Run it yourself](#10-run-it-yourself) |
 
 ## Project status
 
@@ -79,6 +92,37 @@ handling, model selection and honest validation. EcoSentinel packages that whole
 
 **What it deliberately does not do.** Imagery shows that canopy was removed, not whether the clearing was permitted. Judging legality needs boundary,
 permit and field data. The app's reports say this in plain words.
+
+### Environmental impact
+
+**Harm addressed.** Loss of forest cover. Forests store carbon, shelter wildlife and help regulate water, and those functions are lost when canopy is cleared.
+Clearing that nobody notices cannot be investigated or stopped.
+
+**Expected benefit (a hypothesis, not a measured result).** EcoSentinel shortens the path from raw satellite imagery to a short, reviewable list of candidate
+loss areas with coordinates and hectares. The intended effect is that limited field effort is directed to places where canopy actually changed, and that
+changes are noticed earlier. The benefit only materialises if people act on the detections; the software does not itself protect any forest.
+
+#### What is measured today and what is not
+
+| Measured | Not measured |
+|---|---|
+| Agreement with Hansen forest-loss labels on held-out sites (F1 0.545, recall 0.808, precision 0.411 for the selected Random Forest) | Hectares protected, emissions avoided or any field outcome |
+| Per-site scores, calibration and confidence intervals | Accuracy against independent field or high-resolution reference data |
+| Area of each detected patch from the 10 m pixel grid | Any pilot with a forest agency or other user |
+
+No carbon or emissions figures are claimed, because converting detected hectares into emissions would need forest-type, biomass and cause information that this
+project does not have.
+
+#### How a pilot would measure impact (proposal)
+
+| Metric | Why it matters |
+|---|---|
+| Time from canopy clearing to a detection being reviewed | Earlier detection is the core claimed benefit |
+| Share of flagged patches confirmed as real loss in the field | Turns the 0.411 precision against Hansen into a field-verified figure |
+| Hectares reviewed per analyst-hour with and without the tool | Tests whether triage saves effort |
+| Number of detections followed by an action | Links the tool to actual environmental outcomes |
+
+**Footprint of the tool.** The selected Random Forest model runs on a CPU, and the app is hosted on free-tier cloud services. Energy use has not been measured.
 
 ## 2. Product tour
 
@@ -308,11 +352,10 @@ health-check steps, leaving deployment to the connected Vercel and Render Git in
 | CI/CD | `ci-cd.yml` | Python 3.12 and Node 22 | validates dependencies, compiles and tests the backend, type-checks and builds the frontend; includes optional Render and Vercel deploy and health-check jobs |
 
 - **Triggers:** all three workflows run on pull requests and pushes to `main`; the CI/CD workflow can also be started manually. A newer run on the same branch cancels the older run. Jobs use read-only repository permissions.
-- **Deployment secrets:** the CI/CD workflow needs `RENDER_DEPLOY_HOOK_URL` for its Render deploy and `VERCEL_TOKEN`, `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` for its Vercel deploy. If these are absent, the respective deployment and health-check steps are skipped; the workflow reports that the Git integrations remain responsible for deployment.
+- **Deployment secrets:** the CI/CD workflow needs `RENDER_DEPLOY_HOOK_URL` for its Render deploy and `VERCEL_TOKEN`, `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` for its Vercel deploy. If these are absent, the respective deployment and health-check steps are skipped.
 - **Test data:** automated tests use synthetic inputs and a stubbed Earth Engine download, so CI does not assess detection quality on real imagery. Model accuracy comes from the real-data experiment in [section 6](#6-results).
 - **PyTorch in CI:** the backend job installs the CPU build from the official PyTorch index to avoid downloading CUDA libraries. Requirement files are unchanged.
-- **Siamese U-Net tests:** run in their own step marked `continue-on-error` because they had not been executed before CI was added. After one green run, remove that line
-  to make them blocking.
+- **Siamese U-Net tests:** run in their own step marked `continue-on-error` because they had not been executed before CI was added. After one green run, remove that line to make them blocking.
 - **Frontend static checks:** the project defines no ESLint script, so `npm run typecheck` (`tsc --noEmit`) is the static check, followed by the production build.
 
 ## 8. Limitations and responsible interpretation
@@ -326,6 +369,7 @@ health-check steps, leaving deployment to the connected Vercel and Render Git in
 - Class imbalance in the test set affects interpretation; see [section 6](#6-results).
 - The Siamese U-Net run was interrupted and must not be treated as a completed model comparison.
 - The example detection runs have not been checked against independent reference data, so their area estimates carry the same uncertainty as the evaluation.
+- The environmental benefit is a hypothesis: no pilot with a user, and no field outcome, has been measured.
 - One detection runs at a time, and areas are limited to 15 km per side.
 
 ## 9. Roadmap
@@ -368,7 +412,7 @@ npm run dev                     # http://localhost:3000
 export SYLVAN_HANSEN_ASSET=UMD/hansen/global_forest_change_2025_v1_13
 ```
 
-**Reproduce the experiment**
+**Reproduce the experiment** (the Python package keeps its original module name, `sylvan`)
 
 ```bash
 cd backend
@@ -406,7 +450,7 @@ Interactive OpenAPI documentation: https://sylvan-watch-api.onrender.com/docs (i
 ## 12. Repository structure
 
 ```text
-.github/workflows/  backend-ci.yml, frontend-ci.yml (GitHub Actions CI)
+.github/workflows/  backend-ci.yml, frontend-ci.yml, ci-cd.yml (GitHub Actions)
 backend/
   sylvan/
     api/          FastAPI app, request schemas, background jobs and run registry
@@ -425,7 +469,16 @@ docs/
   screenshots/    images used in this README
 ```
 
-## 13. Credits and AI tools used
+## 13. Development notes
+
+| Work | Date | Status |
+|---|---|---|
+| Detection pipeline, three-model comparison, real-data evaluation, web app and deployment | 2 to 4 November 2026 | Built and verified as described in sections 4 to 7 |
+| Project documentation for Green Shift Hacks: environmental-impact framing, pilot-measurement proposal and judging guide | November 2026 | This README |
+
+<!-- Add one row here for every code change, feature or screenshot you actually made for Green Shift Hacks, with its date. List only real work. -->
+
+## 14. Credits and AI tools used
 
 **Data.** Contains modified Copernicus Sentinel data (ESA). Hansen, M. C. et al. (2013), High-Resolution Global Maps of 21st-Century Forest Cover Change, *Science* 342,
 850–853 (University of Maryland / GLAD). ESA WorldCover 10 m 2021 v200. Forest-loss context statistics: WRI and University of Maryland GLAD lab, Global Forest Watch
