@@ -130,8 +130,8 @@ project does not have.
 |---|---|
 | ![Landing page with held-out evaluation summary](docs/screenshots/02-landing-evaluation.png) | ![Model performance page with three-model comparison, confusion matrix and per-site scores](docs/screenshots/03-model-performance.png) |
 | **Landing.** Headline held-out metrics, drawn from the same report as the full evaluation, with the pipeline stages. | **Model performance.** Three models side by side with confidence interval, calibration error, confusion matrix and per-site scores. |
-| ![Landing page hero](docs/screenshots/01-landing.png) | ![Change analysis showing detected forest-loss areas over the satellite basemap](docs/screenshots/05-change-analysis.jpg) |
-| **Landing hero.** The live deployment's front page with the headline, project tag and entry points to the workspace and validation. | **Change analysis.** Detected forest-loss areas over the satellite basemap, with the run's area and patch summary. |
+| ![Change analysis showing detected forest-loss areas over the satellite basemap](docs/screenshots/05-change-analysis.jpg) | ![Methodology page](docs/screenshots/06-methodology.png) |
+| **Change analysis.** Detected forest-loss areas over the satellite basemap, with the run's area and patch summary. | **Methodology.** Data sources, processing steps and scientific limitations in plain language. |
 | ![Datasets, split table and limitations](docs/screenshots/04-model-performance-datasets.png) | ![Methodology page](docs/screenshots/06-methodology.png) |
 | **Datasets and split.** Whole-site split, Hansen loss rates, exact dataset versions and the limitations, on the page itself. | **Methodology.** Data sources, processing steps and scientific limitations in plain language. |
 
