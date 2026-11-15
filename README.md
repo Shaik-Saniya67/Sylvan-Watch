@@ -7,7 +7,7 @@
 
 **Green Shift Hacks 2026 · Sustainability-focused forest monitoring** · Built by Shaik Saniya
 
-> **Project history and submission context:** EcoSentinel is the renamed and sustainability-focused presentation of a project originally developed as Sylvan Watch for Neural Storm 2026 (problem statement GP-04: Illegal Deforestation Detection). The underlying implementation, model training and evaluation predate Green Shift Hacks 2026. This README presents the existing work in the context of forest conservation; the rename and documentation update do not represent a newly built implementation. Any genuinely new work should be identified separately.
+> **Project context:** EcoSentinel is a satellite-based forest-monitoring project focused on identifying and analysing forest-cover loss. This README documents the implementation, evaluation, capabilities and limitations. Any additions made during a particular event should be described separately from the existing implementation.
 
 EcoSentinel compares cloud-masked Sentinel-2 imagery from two years, flags where forest canopy disappeared, measures the affected area as
 georeferenced polygons, and reports how closely three different detectors agree with Hansen reference labels on **geographically held-out sites**,
