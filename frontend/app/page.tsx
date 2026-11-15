@@ -17,7 +17,7 @@ export default function Home() {
         <div aria-hidden className="absolute -right-24 -top-24 h-96 w-96 rounded-full bg-lavender/70 blur-3xl" />
         <div aria-hidden className="absolute -left-24 top-40 h-80 w-80 rounded-full bg-butter/70 blur-3xl" />
         <div className="relative mx-auto max-w-6xl px-5 pb-20 pt-20 sm:pt-28">
-          <p className="mb-5 inline-block rounded-full bg-sky px-4 py-1 text-xs font-medium uppercase tracking-widest">Neural Storm 2026 · GP-04</p>
+          <p className="mb-5 inline-block rounded-full bg-sky px-4 py-1 text-xs font-medium uppercase tracking-widest">Green Shift Hacks 2026 · Ecosystems & climate resilience</p>
           <KineticHeadline left="Forest loss," pill="measured" right="from orbit." />
           <p className="mt-8 max-w-xl text-lg text-muted">
             Sylvan Watch compares real Sentinel-2 imagery across years, finds where canopy disappeared, measures how many hectares,
