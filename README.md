@@ -1,9 +1,9 @@
-# EcoSentinel
+# Sylvan Watch
 
 ### Satellite forest-loss monitoring, validated on sites the models never saw
 
-[![Backend CI](https://github.com/Shaik-Saniya67/EcoSentinel/actions/workflows/backend-ci.yml/badge.svg?branch=main)](https://github.com/Shaik-Saniya67/EcoSentinel/actions/workflows/backend-ci.yml)
-[![Frontend CI](https://github.com/Shaik-Saniya67/EcoSentinel/actions/workflows/frontend-ci.yml/badge.svg?branch=main)](https://github.com/Shaik-Saniya67/EcoSentinel/actions/workflows/frontend-ci.yml)
+[![Backend CI](https://github.com/Shaik-Saniya67/sylvan-watch/actions/workflows/backend-ci.yml/badge.svg?branch=main)](https://github.com/Shaik-Saniya67/sylvan-watch/actions/workflows/backend-ci.yml)
+[![Frontend CI](https://github.com/Shaik-Saniya67/sylvan-watch/actions/workflows/frontend-ci.yml/badge.svg?branch=main)](https://github.com/Shaik-Saniya67/sylvan-watch/actions/workflows/frontend-ci.yml)
 
 **Green Shift Hacks 2026 · Sustainability area: ecosystems and climate resilience** · Built by Shaik Saniya
 
@@ -15,18 +15,18 @@
 
 > **Development note:** the core detection pipeline, the real-data evaluation and the web app were built on 2 to 4 November 2026. Work done for Green Shift Hacks is listed in [section 13](#13-development-notes).
 
-EcoSentinel compares cloud-masked Sentinel-2 imagery from two years, flags where forest canopy disappeared, measures the affected area as
+Sylvan Watch compares cloud-masked Sentinel-2 imagery from two years, flags where forest canopy disappeared, measures the affected area as
 georeferenced polygons, and reports how closely three different detectors agree with Hansen reference labels on **geographically held-out sites**,
 with confidence intervals and every limitation stated.
 
-![EcoSentinel change analysis: detected forest-loss patches over satellite imagery with area, patch count and scanned-forest share](docs/screenshots/05-change-analysis.jpg)
+![Sylvan Watch change analysis: detected forest-loss patches over satellite imagery with area, patch count and scanned-forest share](docs/screenshots/05-change-analysis.jpg)
 *Change analysis view captured on a local development server on 3 Nov 2026, before the final evaluation. It illustrates the interface and output, not the final model's accuracy.*
 
 | | |
 |---|---|
 | **Live app** | https://project-mzb0n.vercel.app/ |
 | **Backend API and OpenAPI docs** | https://sylvan-watch-api.onrender.com · https://sylvan-watch-api.onrender.com/docs |
-| **Source** | https://github.com/Shaik-Saniya67/EcoSentinel |
+| **Source** | https://github.com/Shaik-Saniya67/sylvan-watch |
 
 <!-- DEMO VIDEO: Devpost requires a demo video or walkthrough. Add a row to the table above: | **Demo video** | <link> | -->
 <!-- TEAM: Devpost requires all team members. Add names after 'Built by' under the title if there are others. -->
@@ -79,10 +79,10 @@ higher than a decade earlier, and fires accounted for 42% of global tree cover l
 ground, so the first question for any agency is: *where did canopy just disappear?*
 
 **A note on wording.** The Global Forest Watch reports say "forest loss" rather than "deforestation" because satellite data cannot always show the cause.
-EcoSentinel follows the same discipline: it detects **forest-cover loss**, and it never claims to prove that a clearing was illegal.
+Sylvan Watch follows the same discipline: it detects **forest-cover loss**, and it never claims to prove that a clearing was illegal.
 
 **The gap this fills.** Turning raw imagery into a short, georeferenced list of candidate loss areas that a human can review needs cloud handling, label
-handling, model selection and honest validation. EcoSentinel packages that whole chain as a reproducible pipeline with a web interface.
+handling, model selection and honest validation. Sylvan Watch packages that whole chain as a reproducible pipeline with a web interface.
 
 **Intended users** (potential use cases, not claims of adoption):
 
@@ -98,7 +98,7 @@ permit and field data. The app's reports say this in plain words.
 **Harm addressed.** Loss of forest cover. Forests store carbon, shelter wildlife and help regulate water, and those functions are lost when canopy is cleared.
 Clearing that nobody notices cannot be investigated or stopped.
 
-**Expected benefit (a hypothesis, not a measured result).** EcoSentinel shortens the path from raw satellite imagery to a short, reviewable list of candidate
+**Expected benefit (a hypothesis, not a measured result).** Sylvan Watch shortens the path from raw satellite imagery to a short, reviewable list of candidate
 loss areas with coordinates and hectares. The intended effect is that limited field effort is directed to places where canopy actually changed, and that
 changes are noticed earlier. The benefit only materialises if people act on the detections; the software does not itself protect any forest.
 
@@ -361,7 +361,7 @@ health-check steps, leaving deployment to the connected Vercel and Render Git in
 ## 8. Limitations and responsible interpretation
 
 - Hansen labels are reference data, not field truth. Reported accuracy is agreement with that product.
-- Imagery cannot determine whether forest clearing is illegal. EcoSentinel reports forest-cover loss only.
+- Imagery cannot determine whether forest clearing is illegal. Sylvan Watch reports forest-cover loss only.
 - Plantation harvesting and fire may be labelled as forest loss, by Hansen and by the models.
 - Selective logging and removal of individual trees fall below the resolution of 10 m optical imagery and may not be detected.
 - Metrics apply only to the selected sites, seasons and years (2019 to 2023).
@@ -412,7 +412,7 @@ npm run dev                     # http://localhost:3000
 export SYLVAN_HANSEN_ASSET=UMD/hansen/global_forest_change_2025_v1_13
 ```
 
-**Reproduce the experiment** (the Python package keeps its original module name, `sylvan`)
+**Reproduce the experiment**
 
 ```bash
 cd backend
